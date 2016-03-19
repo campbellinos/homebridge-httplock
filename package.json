@@ -1,6 +1,6 @@
 {
   "name": "homebridge-httplock",
-  "version": "0.0.1",
+  "version": "0.0.9",
   "description": "HTTP controlled lock accessory plugin for Homebridge",
   "keywords": [
     "homebridge-plugin"
