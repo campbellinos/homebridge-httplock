@@ -11,9 +11,10 @@ module.exports = function(homebridge) {
 function LockAccessory(log, config) {
   this.log = log;
   this.name = config["name"];
-  this.lockID = config["lock_id"];
-  this.un = config["username"];
-  this.pw = config["password"];
+  this.url = config["url"];
+  this.lockID = config["lock-id"];
+  this.username = config["username"];
+  this.password = config["password"];
   
   this.service = new Service.LockMechanism(this.name);
   
@@ -31,8 +32,8 @@ LockAccessory.prototype.getState = function(callback) {
   this.log("Getting current state...");
   
   request.get({
-    url: "https://campbellinos.us:5000/Locks",
-    qs: { un: this.un, pw: this.pw }
+    url: this.url,
+    qs: { username: this.username, password: this.password, lockid: this.lockID }
   }, function(err, response, body) {
     
     if (!err && response.statusCode == 200) {
@@ -55,8 +56,8 @@ LockAccessory.prototype.setState = function(state, callback) {
   this.log("Set state to %s", lockState);
 
   request.put({
-    url: "https://campbellinos.us:5000/Locks",
-    qs: { un: this.un, pw: this.pw, state: lockState }
+    url: this.url,
+    qs: { username: this.username, password: this.password, lockid: this.lockID, state: lockState }
   }, function(err, response, body) {
 
     if (!err && response.statusCode == 200) {
