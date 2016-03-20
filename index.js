@@ -60,12 +60,12 @@ LockAccessory.prototype.setState = function(state, callback) {
 
   this.log("Set state to %s", lockState);
 
-  request.put({
+  request.post({
 	agentOptions: {
       ca: fs.readFileSync(this.rootCACert)
     },
     url: this.url,
-    qs: { username: this.username, password: this.password, lockid: this.lockID, state: lockState }
+    form: { username: this.username, password: this.password, lockid: this.lockID, state: lockState }
   }, function(err, response, body) {
 
     if (!err && response.statusCode == 200) {
