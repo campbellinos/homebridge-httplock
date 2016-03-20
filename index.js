@@ -1,4 +1,5 @@
 var request = require("request");
+var fs = require("fs");
 var Service, Characteristic;
 
 module.exports = function(homebridge) {
@@ -13,6 +14,7 @@ function LockAccessory(log, config) {
   this.name = config["name"];
   this.url = config["url"];
   this.lockID = config["lock-id"];
+  this.rootCACert = config["ssl-root-ca-cert"];
   this.username = config["username"];
   this.password = config["password"];
   
@@ -32,6 +34,9 @@ LockAccessory.prototype.getState = function(callback) {
   this.log("Getting current state...");
   
   request.get({
+	agentOptions: {
+      ca: fs.readFileSync(this.rootCACert)
+    },
     url: this.url,
     qs: { username: this.username, password: this.password, lockid: this.lockID }
   }, function(err, response, body) {
@@ -56,6 +61,9 @@ LockAccessory.prototype.setState = function(state, callback) {
   this.log("Set state to %s", lockState);
 
   request.put({
+	agentOptions: {
+      ca: fs.readFileSync(this.rootCACert)
+    },
     url: this.url,
     qs: { username: this.username, password: this.password, lockid: this.lockID, state: lockState }
   }, function(err, response, body) {
