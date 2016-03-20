@@ -1,5 +1,4 @@
 var request = require("request");
-require('ssl-root-cas').inject();
 var Service, Characteristic;
 
 module.exports = function(homebridge) {
