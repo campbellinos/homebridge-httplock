@@ -15,4 +15,4 @@ Example config.json:
       ]
     }
 
-This plugin supports locks controlled by any custom HTTP endpoint via GET (to get state and battery), and PUT (to set new state). The "lock-id", "username" and "password" parameters are passed along to "url" in each GET request. The same parameters plus "state" (either "locked" or "unlocked") are passed along to "url" in each PUT request.
+This plugin supports locks controlled by any custom HTTP endpoint via GET (to get state, either "locked" or "unlocked"), and PUT (to set new state, same possible values). The "lock-id", "username" and "password" parameters are passed along to "url" in each GET request. The same parameters plus "state" are passed along to "url" in each PUT request.
