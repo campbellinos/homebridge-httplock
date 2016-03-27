@@ -25,6 +25,10 @@ function LockAccessory(log, config) {
     .on('get', this.getState.bind(this));
   
   this.service
+    .getCharacteristic(Characteristic.BatteryLevel)
+    .on('get', this.getBattery.bind(this));
+  
+  this.service
     .getCharacteristic(Characteristic.LockTargetState)
     .on('get', this.getState.bind(this))
     .on('set', this.setState.bind(this));
@@ -55,6 +59,30 @@ LockAccessory.prototype.getState = function(callback) {
   }.bind(this));
 }
 
+LockAccessory.prototype.getBattery = function(callback) {
+  this.log("Getting current battery...");
+  
+  request.get({
+	agentOptions: {
+      ca: fs.readFileSync(this.rootCACert)
+    },
+    url: this.url,
+    qs: { username: this.username, password: this.password, lockid: this.lockID }
+  }, function(err, response, body) {
+    
+    if (!err && response.statusCode == 200) {
+      var json = JSON.parse(body);
+      var batt = json.battery;
+      this.log("Lock battery is %s", batt);
+      callback(null, batt); // success
+    }
+    else {
+      this.log("Error getting battery (status code %s): %s", response.statusCode, err);
+      callback(err);
+    }
+  }.bind(this));
+}
+
 LockAccessory.prototype.setState = function(state, callback) {
   var lockState = (state == Characteristic.LockTargetState.SECURED) ? "locked" : "unlocked";
 
@@ -70,14 +98,20 @@ LockAccessory.prototype.setState = function(state, callback) {
 
     if (!err && response.statusCode == 200) {
       this.log("State change complete.");
-      
+
       // we succeeded, so update the "current" state as well
       var currentState = (state == Characteristic.LockTargetState.SECURED) ?
         Characteristic.LockCurrentState.SECURED : Characteristic.LockCurrentState.UNSECURED;
       
       this.service
         .setCharacteristic(Characteristic.LockCurrentState, currentState);
-      
+
+      var json = JSON.parse(body);
+      var batt = json.battery;
+
+      this.service
+        .setCharacteristic(Characteristic.BatteryLevel, batt);
+
       callback(null); // success
     }
     else {
