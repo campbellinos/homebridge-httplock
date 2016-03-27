@@ -19,6 +19,7 @@ function LockAccessory(log, config) {
   this.password = config["password"];
   
   this.lockservice = new Service.LockMechanism(this.name);
+  this.battservice = new Service.LockMechanism(this.name);
   
   this.lockservice
     .getCharacteristic(Characteristic.LockCurrentState)
