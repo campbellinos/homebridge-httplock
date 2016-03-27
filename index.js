@@ -19,7 +19,6 @@ function LockAccessory(log, config) {
   this.password = config["password"];
   
   this.lockservice = new Service.LockMechanism(this.name);
-  this.battservice = new Service.LockMechanism(this.name);
   
   this.lockservice
     .getCharacteristic(Characteristic.LockCurrentState)
@@ -30,7 +29,7 @@ function LockAccessory(log, config) {
     .on('get', this.getState.bind(this))
     .on('set', this.setState.bind(this));
 	
-  this.lockservice = new Service.BatteryService(this.name);
+  this.battservice = new Service.BatteryService(this.name);
   
   this.battservice
     .getCharacteristic(Characteristic.BatteryLevel)
